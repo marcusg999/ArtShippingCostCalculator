@@ -157,8 +157,16 @@
             width: auto;
             margin: 0;
         }
+        .on-site-visit-container  input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
 
         .site-visit-container label {
+            display: inline;
+            margin: 0;
+        }
+      .on-site-visit-container label {
             display: inline;
             margin: 0;
         }
@@ -462,13 +470,12 @@
                     <input type="number" id="tyvek_qty" min="0" value="0" class="quantity-input">
                 </div>
             </div>
+          
 <div class="site-visit-container">
-                <input type="checkbox" id="OnsiteVisit">
-  <div class="site-visit-container">
-                <label for="siteVisit">On Site Visit Required ($200)</label>
-            <div class="site-visit-container">
-                <input type="checkbox" id="siteVisit">
+                <label for="OnsiteWrap">On Site Wrapping Required</label>
+                <input type="checkbox" id="OnsiteWrap">
                 <label for="siteVisit">Site Visit Required ($200)</label>
+  <input type="checkbox" id="siteVisit">
             </div>
         </div>
         <button onclick="calculateCost()">Calculate Shipping Cost</button>
