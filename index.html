@@ -516,19 +516,19 @@
 <body>
     <div class="calculator-container">
         <h1>Art Shipping Estimate generator</h1>
-<div class="switch-container">
+
+        <div class="form-group">
+            <label>Project Title</label>
+            <input type="text">
+            <div class="form-group">
+                <label for="displayMode">Display Mode:</label>
+                <div class="switch-container">
                     <label class="switch">
                         <input type="checkbox" id="displayMode">
                         <span class="slider round"></span>
                     </label>
                     <span class="mode-label">Day</span>
                 </div>
-        <div class="form-group">
-            <label>Project Title</label>
-            <input type="text">
-            <div class="form-group">
-                <label for="displayMode">Display Mode:</label>
-                
             </div>
             <h3>Artworks</h3>
             <div class="artworks-container" id="artworksContainer">
@@ -788,20 +788,77 @@
             return height * length * width * weight * 0.005;
         }
 
-        function calculateCrateSize(artworks) {
-            // This is a placeholder function. You need to implement the actual logic to calculate crate size.
-            let maxSize = 0;
-            artworks.forEach((artwork) => {
-                const height = parseFloat(artwork.querySelector('.height').value);
-                const length = parseFloat(artwork.querySelector('.length').value);
-                const width = parseFloat(artwork.querySelector('.width').value);
-                const size = Math.max(height, length, width);
-                if (size > maxSize) {
-                    maxSize = size;
-                }
-            });
-            return `${maxSize} x ${maxSize} x ${maxSize}`;
+       function calculateCrateSize(artworks) {
+    // Initialize variables for maximum dimensions
+    let maxHeight = 0;
+    let maxLength = 0;
+    let maxWidth = 0;
+    let totalVolume = 0;
+
+    // Constants for crate padding and material thickness
+    const PADDING = {
+        STANDARD: 4,      // Standard padding in inches
+        FRAGILE: 6,       // Extra padding for fragile items
+        WALL_THICKNESS: 0.75, // Crate wall thickness in inches
+    };
+
+    artworks.forEach((artwork) => {
+        // Get dimensions and artwork type
+        const height = parseFloat(artwork.querySelector('.height').value) || 0;
+        const length = parseFloat(artwork.querySelector('.length').value) || 0;
+        const width = parseFloat(artwork.querySelector('.width').value) || 0;
+        const artType = artwork.querySelector('.artType').value;
+        const texture = artwork.querySelector('.texture').value;
+
+        // Calculate required padding based on artwork type and texture
+        let requiredPadding = PADDING.STANDARD;
+        
+        // Add extra padding for sculptures or highly textured pieces
+        if (artType === 'sculpture' || texture === 'highly_textured') {
+            requiredPadding = PADDING.FRAGILE;
         }
+
+        // Update maximum dimensions including padding
+        const paddedHeight = height + (requiredPadding * 2) + (PADDING.WALL_THICKNESS * 2);
+        const paddedLength = length + (requiredPadding * 2) + (PADDING.WALL_THICKNESS * 2);
+        const paddedWidth = width + (requiredPadding * 2) + (PADDING.WALL_THICKNESS * 2);
+
+        maxHeight = Math.max(maxHeight, paddedHeight);
+        maxLength = Math.max(maxLength, paddedLength);
+        maxWidth = Math.max(maxWidth, paddedWidth);
+
+        // Calculate individual artwork volume
+        const volume = height * length * width;
+        totalVolume += volume;
+    });
+
+    // Round up all dimensions to nearest inch
+    maxHeight = Math.ceil(maxHeight);
+    maxLength = Math.ceil(maxLength);
+    maxWidth = Math.ceil(maxWidth);
+
+    // Determine if we need to adjust dimensions based on total volume
+    const crateVolume = maxHeight * maxLength * maxWidth;
+    const volumeEfficiency = totalVolume / crateVolume;
+
+    // If volume efficiency is very low, consider stacking or alternative arrangements
+    if (volumeEfficiency < 0.3 && artworks.length > 1) {
+        // For multiple small items, consider a more compact arrangement
+        const cubeRoot = Math.ceil(Math.cbrt(totalVolume * 2)); // Multiple by 2 for padding
+        maxHeight = Math.max(maxHeight, cubeRoot);
+        maxLength = Math.max(maxLength, cubeRoot);
+        maxWidth = Math.max(maxWidth, cubeRoot);
+    }
+
+    // Ensure minimum crate dimensions
+    const MINIMUM_SIZE = 12; // Minimum 12 inches for any dimension
+    maxHeight = Math.max(maxHeight, MINIMUM_SIZE);
+    maxLength = Math.max(maxLength, MINIMUM_SIZE);
+    maxWidth = Math.max(maxWidth, MINIMUM_SIZE);
+
+    // Return formatted dimensions string in inches only
+    return `${maxHeight}" × ${maxLength}" × ${maxWidth}"`;
+}
 
         function saveAsPDF() {
             const doc = new jspdf.jsPDF();
