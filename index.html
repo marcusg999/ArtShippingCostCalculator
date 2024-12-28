@@ -157,16 +157,8 @@
             width: auto;
             margin: 0;
         }
-        .on-site-visit-container  input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
 
         .site-visit-container label {
-            display: inline;
-            margin: 0;
-        }
-      .on-site-visit-container label {
             display: inline;
             margin: 0;
         }
@@ -182,13 +174,13 @@
         .remove-artwork {
             position: absolute;
             right: 10px;
-            top: 5px;
+            top: 10px;
             background: #e74c3c;
             color: white;
             border: none;
-            border-radius: 10%;
-            width: 10px;
-            height: 10px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -257,87 +249,138 @@
             background: #d35400;
         }
 
-        .additional-fees {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .add-other-fee {
-            background: #27ae60;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-            display: inline-block;
-            width: auto;
-        }
-
-        .other-fees-container {
-            margin-top: 10px;
-        }
-
-        .other-fee-row {
+        /* Add day/night toggle styles */
+        .toggle-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            justify-content: flex-end;
+            margin-bottom: 20px;
         }
 
-        .fee-item {
-            margin-bottom: 15px;
+        .toggle-label {
+            margin-right: 10px;
         }
 
-        .remove-fee {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
             cursor: pointer;
-            width: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
         }
 
-        .remove-fee:hover {
-            background: #c0392b;
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
         }
 
-        .fee-name-input {
-            flex: 2;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+        input:checked + .toggle-slider {
+            background-color: #2196F3;
         }
 
-        .other-fee-row input[type="number"] {
-            flex: 1;
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
-        .other-fee-row button.remove-fee {
-            flex: 0 0 auto;
+        /* Add night mode styles */
+        body.night-mode {
+            background-color: #333;
+            color: #f5f5f5;
         }
 
+        .night-mode .calculator-container {
+            background-color: #444;
+            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+        }
+
+        .night-mode label {
+            color: #f5f5f5;
+        }
+
+        .night-mode input, .night-mode select {
+            background-color: #555;
+            color: #f5f5f5;
+            border-color: #777;
+        }
+
+        .night-mode button {
+            background-color: #555;
+        }
+
+        .night-mode button:hover {
+            background-color: #777;
+        }
+
+        .night-mode .result {
+            background-color: #555;
+        }
+
+        .night-mode .artwork-item {
+            border-color: #777;
+        }
+
+        .night-mode .remove-artwork {
+            background-color: #c0392b;
+        }
+
+        .night-mode .add-artwork {
+            background-color: #16a085;
+        }
+
+        .night-mode .supplies-list {
+            border-color: #777;
+        }
+
+        .night-mode .pdf-button {
+            background-color: #d35400;
+        }
+
+        .night-mode .pdf-button:hover {
+            background-color: #e67e22;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
+    <div class="toggle-container">
+        <label for="dayNightToggle" class="toggle-label">Night Mode</label>
+        <label class="toggle-switch">
+            <input type="checkbox" id="dayNightToggle">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
     <div class="calculator-container">
         <h1>Art Shipping Estimate generator</h1>
 
         <div class="form-group">
-            
-           <label>Project Title</label>
-                  <input type="text">
-          <h3>Artworks</h3>
+            <h3>Artworks</h3>
             <div class="artworks-container" id="artworksContainer">
                 <div class="artwork-item">
                     <button type="button" class="remove-artwork" onclick="removeArtwork(this)">×</button>
-                   <label>Art Work Title</label>
-                  <input type="text">
-                
                     <label for="height-0">Height (inches):</label>
                     <input type="number" class="height" id="height-0" min="0" step="0.1">
                     
@@ -380,52 +423,11 @@
 
         <div class="form-group">
             <h3>Project Details</h3>
-            <div class="additional-fees">
-                <div class="fee-item">
-                    <label for="fuel_surcharge">Local Trucking Fuel Surcharge ($):</label>
-                    <input type="number" id="fuel_surcharge" min="0" step="0.01" value="0">
-                </div>
-                
-                <div class="fee-item">
-                    <label for="safety_admin">Safety and Admin Fee ($):</label>
-                    <input type="number" id="safety_admin" min="0" step="0.01" value="0">
-                </div>
-                
-                <div class="fee-item">
-                    <label for="warehouse_fee">Warehouse Fee ($):</label>
-                    <input type="number" id="warehouse_fee" min="0" step="0.01" value="0">
-                </div>
-                
-                <div class="fee-item">
-                    <label for="transport_fee">Transport of Crated Work(s) ($):</label>
-                    <input type="number" id="transport_fee" min="0" step="0.01" value="0">
-                </div>
-                
-                <div class="fee-item">
-                    <label for="export_docs">Export Documentation/Security Compliance ($):</label>
-                    <input type="number" id="export_docs" min="0" step="0.01" value="0">
-                </div>
-                
-                <div class="fee-item">
-                    <label for="other_fee">Other:</label>
-                    <div class="other-fee-row">
-                        <input type="text" id="other_fee_name" placeholder="Fee Description" class="fee-name-input">
-                        <input type="number" id="other_fee" min="0" step="0.01" value="0" class="quantity-input">
-                        <button type="button" class="add-other-fee" onclick="addOtherFee()">Add Another</button>
-                    </div>
-                    <div id="other-fees-container" class="other-fees-container"></div>
-                </div>
-            </div>
             <label for="techCount">Number of Technicians:</label>
             <input type="number" id="techCount" min="1" max="10">
 
             <label for="days">Days to Complete:</label>
             <input type="number" id="days" min="1" max="30">
-          
-          <label for="days">Collection date/time desired:</label>
-            <input type="datetime-local" id="days" min="1" max="30">
-          <label for="days">Delivery date/time desired:</label>
-            <input type="datetime-local" id="days" min="1" max="30">
 
             <label for="supplies">Required Supplies:</label>
             <div id="supplies" class="supplies-list">
@@ -441,7 +443,7 @@
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="poly_plastic">
-                    <label for="poly_plastic">Poly Plastic per ft ($15)</label>
+                    <label for="poly_plastic">Poly Plastic per Yard ($15)</label>
                     <input type="number" id="poly_plastic_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
@@ -466,18 +468,17 @@
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="tyvek">
-                    <label for="tyvek">Tyvek, Durtek, Twill per ft ($30)</label>
+                    <label for="tyvek">Tyvek, Durtek, Twill per yard ($30)</label>
                     <input type="number" id="tyvek_qty" min="0" value="0" class="quantity-input">
                 </div>
             </div>
-          
-<div class="site-visit-container">
-                <label for="OnsiteWrap">On Site Wrapping Required</label>
-                <input type="checkbox" id="OnsiteWrap">
+
+            <div class="site-visit-container">
+                <input type="checkbox" id="siteVisit">
                 <label for="siteVisit">Site Visit Required ($200)</label>
-  <input type="checkbox" id="siteVisit">
             </div>
         </div>
+
         <button onclick="calculateCost()">Calculate Shipping Cost</button>
 
         <div class="result" id="result">
@@ -494,7 +495,6 @@
 
     <script>
         let artworkCount = 1;
-        let otherFeeCount = 1;
 
         function addArtwork() {
             const container = document.getElementById('artworksContainer');
@@ -502,8 +502,6 @@
             newArtwork.className = 'artwork-item';
             newArtwork.innerHTML = `
                 <button type="button" class="remove-artwork" onclick="removeArtwork(this)">×</button>
-                 <label>Art Work Title</label>
-                  <input type="text">
                 <label for="height-${artworkCount}">Height (inches):</label>
                 <input type="number" class="height" id="height-${artworkCount}" min="0" step="0.1">
                 
@@ -549,40 +547,6 @@
                 button.parentElement.remove();
             } else {
                 alert('You must have at least one artwork');
-            }
-        }
-
-        function addOtherFee() {
-            const container = document.getElementById('other-fees-container');
-            const newFeeRow = document.createElement('div');
-            newFeeRow.className = 'other-fee-row';
-            
-            const feeId = `other_fee_${otherFeeCount}`;
-            
-            newFeeRow.innerHTML = `
-                <input type="text" 
-                       id="${feeId}_name" 
-                       placeholder="Fee Description" 
-                       class="fee-name-input">
-                <input type="number" 
-                       id="${feeId}" 
-                       min="0" 
-                       step="0.01" 
-                       value="0" 
-                       class="quantity-input">
-                <button type="button" 
-                        class="remove-fee" 
-                        onclick="removeOtherFee(this)">Remove</button>
-            `;
-            
-            container.appendChild(newFeeRow);
-            otherFeeCount++;
-        }
-
-        function removeOtherFee(button) {
-            const row = button.closest('.other-fee-row');
-            if (row) {
-                row.remove();
             }
         }
 
@@ -663,24 +627,7 @@
             const laborCost = techCount * days * hoursPerDay * baseLabor;
             const siteVisitCost = siteVisit ? 200 : 0;
             const additionalSuppliesCost = calculateSuppliesCost();
-
-            const fuelSurcharge = parseFloat(document.getElementById('fuel_surcharge').value) || 0;
-            const safetyAdmin = parseFloat(document.getElementById('safety_admin').value) || 0;
-            const warehouseFee = parseFloat(document.getElementById('warehouse_fee').value) || 0;
-            const transportFee = parseFloat(document.getElementById('transport_fee').value) || 0;
-            const exportDocs = parseFloat(document.getElementById('export_docs').value) || 0;
-            const otherFee = parseFloat(document.getElementById('other_fee').value) || 0;
-            
-            // Calculate total of all other fees including the additional ones
-            let totalOtherFees = otherFee;
-            const otherFeeInputs = document.querySelectorAll('#other-fees-container .other-fee-row');
-            otherFeeInputs.forEach(row => {
-                const valueInput = row.querySelector('input[type="number"]');
-                totalOtherFees += parseFloat(valueInput.value) || 0;
-            });
-
-            const totalCost = laborCost + totalMaterialsCost + siteVisitCost + additionalSuppliesCost + 
-                            fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + totalOtherFees;
+            const totalCost = laborCost + totalMaterialsCost + siteVisitCost + additionalSuppliesCost;
 
             document.getElementById('result').style.display = 'block';
             let crateSizesHtml = '<strong>Crate Dimensions:</strong><br>';
@@ -692,13 +639,7 @@
             document.getElementById('laborCost').innerHTML = `Labor Cost: $${laborCost.toFixed(2)}`;
             document.getElementById('materialsCost').innerHTML = 
                 `Materials Cost: $${totalMaterialsCost.toFixed(2)} (Crating)<br>` +
-                `Additional Supplies: $${additionalSuppliesCost.toFixed(2)}<br>` +
-                `Fuel Surcharge: $${fuelSurcharge.toFixed(2)}<br>` +
-                `Safety and Admin: $${safetyAdmin.toFixed(2)}<br>` +
-                `Warehouse Fee: $${warehouseFee.toFixed(2)}<br>` +
-                `Transport Fee: $${transportFee.toFixed(2)}<br>` +
-                `Export Documentation: $${exportDocs.toFixed(2)}<br>` +
-                `Other Fees: $${totalOtherFees.toFixed(2)}`;
+                `Additional Supplies: $${additionalSuppliesCost.toFixed(2)}`;
             document.getElementById('siteVisitCost').innerHTML = siteVisit ? `Site Visit Cost: $${siteVisitCost.toFixed(2)}` : '';
             document.getElementById('totalCost').innerHTML = `<strong>Total Estimated Cost: $${totalCost.toFixed(2)}</strong>`;
 
@@ -803,35 +744,7 @@
             doc.text(`Site Visit: ${document.getElementById('siteVisit').checked ? 'Yes' : 'No'}`, 20, yPosition + 10);
             
             yPosition += 20;
-
-            // Add additional fees
-            doc.setFontSize(12);
-            doc.text('Additional Fees:', 20, yPosition);
-            yPosition += 10;
-
-            doc.setFontSize(10);
-            doc.text(`Fuel Surcharge: $${document.getElementById('fuel_surcharge').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-            doc.text(`Safety and Admin Fee: $${document.getElementById('safety_admin').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-            doc.text(`Warehouse Fee: $${document.getElementById('warehouse_fee').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-            doc.text(`Transport Fee: $${document.getElementById('transport_fee').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-            doc.text(`Export Documentation: $${document.getElementById('export_docs').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-            doc.text(`Other: ${document.getElementById('other_fee_name').value || 'Additional Fee'}: $${document.getElementById('other_fee').value || '0'}`, 20, yPosition);
-            yPosition += 5;
-
-            const otherFeeInputs = document.querySelectorAll('#other-fees-container .other-fee-row');
-            otherFeeInputs.forEach(row => {
-                const nameInput = row.querySelector('input[type="text"]');
-                const valueInput = row.querySelector('input[type="number"]');
-                doc.text(`${nameInput.value || 'Additional Fee'}: $${valueInput.value || '0'}`, 20, yPosition);
-                yPosition += 5;
-            });
-            yPosition += 10;
-
+            
             // Add costs
             doc.setFontSize(12);
             doc.text('Cost Breakdown:', 20, yPosition);
@@ -850,6 +763,10 @@
             doc.save('art-shipping-estimate.pdf');
         }
 
+        function toggleDayNightMode() {
+            document.body.classList.toggle('night-mode');
+        }
+
         function initializeSuppliesHandlers() {
             const supplies = document.querySelectorAll('.supply-item input[type="checkbox"]');
             supplies.forEach(checkbox => {
@@ -864,6 +781,9 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', initializeSuppliesHandlers);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('dayNightToggle').addEventListener('change', toggleDayNightMode);
+            initializeSuppliesHandlers();
+        });
     </script>
 </body></html>
