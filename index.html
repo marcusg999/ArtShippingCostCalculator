@@ -3,95 +3,460 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
+            color: #333;
         }
 
         .calculator-container {
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
             box-sizing: border-box;
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 36px;
             text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        h3 {
+            font-size: 24px;
+            margin-bottom: 20px; 
+            color: #34495e;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 2px solid #ddd;
             border-radius: 4px;
             margin-bottom: 15px;
             box-sizing: border-box;
             font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
         }
 
         button {
-            background: #2c3e50;
+            background: #2ecc71;
             color: white;
             padding: 15px 24px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.3s;
             width: 100%;
-            font-size: 16px;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         button:hover {
-            background: #34495e;
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
         }
 
         .result {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
+            margin-top: 40px;
+            padding: 30px;
+            background: #ecf0f1;
             border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
             display: none;
         }
 
         .artwork-preview {
             width: 100%;
-            max-width: 300px;
-            height: 300px;
-            border: 2px dashed #ccc;
-            margin: 20px auto;
+            max-width: 400px;
+            height: 400px;
+            border: 2px dashed #bdc3c7;
+            margin: 30px auto;
             position: relative;
         }
 
         .size-indicator {
             position: absolute;
-            color: #666;
-            font-size: 12px;
+            color: #7f8c8d;
+            font-size: 14px;
         }
 
         @keyframes calculateAnimation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .calculating {
             animation: calculateAnimation 1s ease-in-out;
+        }
+
+        .site-visit-container,
+        .on-site-visit-container {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .site-visit-container input[type="checkbox"],
+        .on-site-visit-container input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .site-visit-container label,
+        .on-site-visit-container label {
+            display: inline;
+            margin: 0;
+        }
+
+        .artwork-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            position: relative;
+            background: #f9f9f9;
+        }
+
+        .remove-artwork {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .remove-artwork:hover {
+            background: #c0392b;
+        }
+
+        .add-artwork {
+            background: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .add-artwork:hover {
+            background: #2980b9;
+        }
+
+        .artworks-container {
+            margin-bottom: 30px;
+        }
+
+        select[multiple] {
+            height: auto;
+            min-height: 120px;
+        }
+
+        select[multiple] option {
+            padding: 8px 12px;
+        }
+
+        .supplies-list {
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        .supply-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .supply-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .supply-item label {
+            display: inline;
+            margin: 0;
+            flex: 1;
+        }
+
+        .quantity-input {
+            width: 100px !important;
+            padding: 8px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .supply-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pdf-button {
+            margin-top: 20px;
+            background: #e67e22;
+        }
+
+        .pdf-button:hover {
+            background: #d35400;
+        }
+
+        .additional-fees {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .add-other-fee {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            display: inline-block;
+            width: auto;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .add-other-fee:hover {
+            background: #2980b9;
+        }
+
+        .other-fees-container {
+            margin-top: 15px;
+        }
+
+        .other-fee-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .fee-item {
+            margin-bottom: 20px;
+        }
+
+        .remove-fee {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .remove-fee:hover {
+            background: #c0392b;
+        }
+
+        .fee-name-input {
+            flex: 2;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .fee-name-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .other-fee-row input[type="number"] {
+            flex: 1;
+        }
+
+        .other-fee-row button.remove-fee {
+            flex: 0 0 auto;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .mode-label {
+            font-size: 18px;
+        }
+
+        body.night-mode {
+            background-color: #333;
+            color: #f5f5f5;
+        }
+
+        .night-mode .calculator-container {
+            background-color: #444;
+        }
+
+        .night-mode h1,
+        .night-mode h3,
+        .night-mode label {
+            color: #f5f5f5;
+        }
+
+        .night-mode input,
+        .night-mode select {
+            background-color: #555;
+            color: #f5f5f5;
+            border-color: #777;
+        }
+
+        .night-mode .result {
+            background-color: #555;
+        }
+
+        .night-mode .artwork-preview {
+            border-color: #777;
+        }
+
+        .night-mode .supplies-list {
+            background-color: #555;
+            border-color: #777;
+        }
+
+        .night-mode .artwork-item {
+            background-color: #555;
+        }
+
+        .night-mode .remove-artwork {
+            background-color: #c0392b;
+        }
+
+        .night-mode .remove-artwork:hover {
+            background-color: #e74c3c;
+        }
+
+        .night-mode .add-artwork {
+            background-color: #2980b9;
+        }
+
+        .night-mode .add-artwork:hover {
+            background-color: #3498db;
+        }
+
+        .night-mode .pdf-button {
+            background-color: #d35400;
+        }
+
+        .night-mode .pdf-button:hover {
+            background-color: #e67e22;
+        }
+
+        .night-mode .add-other-fee {
+            background-color: #2980b9;
+        }
+
+        .night-mode .add-other-fee:hover {
+            background-color: #3498db;
+        }
+
+        .night-mode .remove-fee {
+            background-color: #c0392b;
+        }
+
+        .night-mode .remove-fee:hover {
+            background-color: #e74c3c;
         }
 
         @media (max-width: 768px) {
@@ -104,7 +469,7 @@
             }
 
             h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
 
             h3 {
@@ -145,261 +510,46 @@
                 padding: 15px;
             }
         }
-
-        .site-visit-container {
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .site-visit-container input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
-
-        .site-visit-container label {
-            display: inline;
-            margin: 0;
-        }
-
-        .artwork-item {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            position: relative;
-        }
-
-        .remove-artwork {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .add-artwork {
-            background: #27ae60;
-            margin-bottom: 20px;
-        }
-
-        .artworks-container {
-            margin-bottom: 20px;
-        }
-
-        select[multiple] {
-            height: auto;
-            min-height: 120px;
-        }
-
-        select[multiple] option {
-            padding: 8px 12px;
-        }
-
-        .supplies-list {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-
-        .supply-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
-        .supply-item input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
-
-        .supply-item label {
-            display: inline;
-            margin: 0;
-            flex: 1;
-        }
-
-        .quantity-input {
-            width: 80px !important;
-            padding: 8px !important;
-            margin-bottom: 0 !important;
-        }
-
-        .supply-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .pdf-button {
-            margin-top: 20px;
-            background: #e67e22;
-        }
-
-        .pdf-button:hover {
-            background: #d35400;
-        }
-
-        /* Add day/night toggle styles */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .toggle-label {
-            margin-right: 10px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: #2196F3;
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        /* Add night mode styles */
-        body.night-mode {
-            background-color: #333;
-            color: #f5f5f5;
-        }
-
-        .night-mode .calculator-container {
-            background-color: #444;
-            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
-        }
-
-        .night-mode label {
-            color: #f5f5f5;
-        }
-
-        .night-mode input, .night-mode select {
-            background-color: #555;
-            color: #f5f5f5;
-            border-color: #777;
-        }
-
-        .night-mode button {
-            background-color: #555;
-        }
-
-        .night-mode button:hover {
-            background-color: #777;
-        }
-
-        .night-mode .result {
-            background-color: #555;
-        }
-
-        .night-mode .artwork-item {
-            border-color: #777;
-        }
-
-        .night-mode .remove-artwork {
-            background-color: #c0392b;
-        }
-
-        .night-mode .add-artwork {
-            background-color: #16a085;
-        }
-
-        .night-mode .supplies-list {
-            border-color: #777;
-        }
-
-        .night-mode .pdf-button {
-            background-color: #d35400;
-        }
-
-        .night-mode .pdf-button:hover {
-            background-color: #e67e22;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <div class="toggle-container">
-        <label for="dayNightToggle" class="toggle-label">Night Mode</label>
-        <label class="toggle-switch">
-            <input type="checkbox" id="dayNightToggle">
-            <span class="toggle-slider"></span>
-        </label>
-    </div>
     <div class="calculator-container">
         <h1>Art Shipping Estimate generator</h1>
 
         <div class="form-group">
+            <label>Project Title</label>
+            <input type="text">
+            <div class="form-group">
+                <label for="displayMode">Display Mode:</label>
+                <div class="switch-container">
+                    <label class="switch">
+                        <input type="checkbox" id="displayMode">
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="mode-label">Day</span>
+                </div>
+            </div>
             <h3>Artworks</h3>
             <div class="artworks-container" id="artworksContainer">
                 <div class="artwork-item">
                     <button type="button" class="remove-artwork" onclick="removeArtwork(this)">×</button>
+                    <label>Art Work Title</label>
+                    <input type="text">
                     <label for="height-0">Height (inches):</label>
                     <input type="number" class="height" id="height-0" min="0" step="0.1">
-                    
                     <label for="length-0">Length (inches):</label>
                     <input type="number" class="length" id="length-0" min="0" step="0.1">
-                    
                     <label for="width-0">Width (inches):</label>
                     <input type="number" class="width" id="width-0" min="0" step="0.1">
-                    
                     <label for="weight-0">Weight (lbs):</label>
                     <input type="number" class="weight" id="weight-0" min="0" step="0.1">
-                    
                     <label for="artType-0">Artwork Type:</label>
                     <select class="artType" id="artType-0">
                         <option value="canvas">Canvas</option>
                         <option value="sculpture">Sculpture</option>
                         <option value="other">Other</option>
                     </select>
-
                     <label for="material-0">Material:</label>
                     <select class="material" id="material-0">
                         <option value="oil">Oil Paint</option>
@@ -409,7 +559,6 @@
                         <option value="wood">Wood</option>
                         <option value="mixed">Mixed Media</option>
                     </select>
-
                     <label for="texture-0">Surface Texture:</label>
                     <select class="texture" id="texture-0">
                         <option value="smooth">Smooth</option>
@@ -423,12 +572,45 @@
 
         <div class="form-group">
             <h3>Project Details</h3>
+            <div class="additional-fees">
+                <div class="fee-item">
+                    <label for="fuel_surcharge">Local Trucking Fuel Surcharge ($):</label>
+                    <input type="number" id="fuel_surcharge" min="0" step="0.01" value="0">
+                </div>
+                <div class="fee-item">
+                    <label for="safety_admin">Safety and Admin Fee ($):</label>
+                    <input type="number" id="safety_admin" min="0" step="0.01" value="0">
+                </div>
+                <div class="fee-item">
+                    <label for="warehouse_fee">Warehouse Fee ($):</label>
+                    <input type="number" id="warehouse_fee" min="0" step="0.01" value="0">
+                </div>
+                <div class="fee-item">
+                    <label for="transport_fee">Transport of Crated Work(s) ($):</label>
+                    <input type="number" id="transport_fee" min="0" step="0.01" value="0">
+                </div>
+                <div class="fee-item">
+                    <label for="export_docs">Export Documentation/Security Compliance ($):</label>
+                    <input type="number" id="export_docs" min="0" step="0.01" value="0">
+                </div>
+                <div class="fee-item">
+                    <label for="other_fee">Other:</label>
+                    <div class="other-fee-row">
+                        <input type="text" id="other_fee_name" placeholder="Fee Description" class="fee-name-input">
+                        <input type="number" id="other_fee" min="0" step="0.01" value="0" class="quantity-input">
+                        <button type="button" class="add-other-fee" onclick="addOtherFee()">Add Another</button>
+                    </div>
+                    <div id="other-fees-container" class="other-fees-container"></div>
+                </div>
+            </div>
             <label for="techCount">Number of Technicians:</label>
             <input type="number" id="techCount" min="1" max="10">
-
             <label for="days">Days to Complete:</label>
             <input type="number" id="days" min="1" max="30">
-
+            <label for="days">Collection date/time desired:</label>
+            <input type="datetime-local" id="collection_date" min="1" max="30">
+            <label for="days">Delivery date/time desired:</label>
+            <input type="datetime-local" id="delivery_date" min="1" max="30">
             <label for="supplies">Required Supplies:</label>
             <div id="supplies" class="supplies-list">
                 <div class="supply-item">
@@ -443,7 +625,7 @@
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="poly_plastic">
-                    <label for="poly_plastic">Poly Plastic per Yard ($15)</label>
+                    <label for="poly_plastic">Poly Plastic per ft ($15)</label>
                     <input type="number" id="poly_plastic_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
@@ -468,17 +650,17 @@
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="tyvek">
-                    <label for="tyvek">Tyvek, Durtek, Twill per yard ($30)</label>
+                    <label for="tyvek">Tyvek, Durtek, Twill per ft ($30)</label>
                     <input type="number" id="tyvek_qty" min="0" value="0" class="quantity-input">
                 </div>
             </div>
-
             <div class="site-visit-container">
-                <input type="checkbox" id="siteVisit">
+                <label for="OnsiteWrap">On Site Wrapping Required</label>
+                <input type="checkbox" id="OnsiteWrap">
                 <label for="siteVisit">Site Visit Required ($200)</label>
+                <input type="checkbox" id="siteVisit">
             </div>
         </div>
-
         <button onclick="calculateCost()">Calculate Shipping Cost</button>
 
         <div class="result" id="result">
@@ -495,32 +677,30 @@
 
     <script>
         let artworkCount = 1;
+        let otherFeeCount = 1;
 
         function addArtwork() {
             const container = document.getElementById('artworksContainer');
             const newArtwork = document.createElement('div');
-            newArtwork.className = 'artwork-item';
+            newArtwork.classList.add('artwork-item');
             newArtwork.innerHTML = `
                 <button type="button" class="remove-artwork" onclick="removeArtwork(this)">×</button>
+                <label>Art Work Title</label>
+                <input type="text">
                 <label for="height-${artworkCount}">Height (inches):</label>
                 <input type="number" class="height" id="height-${artworkCount}" min="0" step="0.1">
-                
                 <label for="length-${artworkCount}">Length (inches):</label>
                 <input type="number" class="length" id="length-${artworkCount}" min="0" step="0.1">
-                
                 <label for="width-${artworkCount}">Width (inches):</label>
                 <input type="number" class="width" id="width-${artworkCount}" min="0" step="0.1">
-                
                 <label for="weight-${artworkCount}">Weight (lbs):</label>
                 <input type="number" class="weight" id="weight-${artworkCount}" min="0" step="0.1">
-                
                 <label for="artType-${artworkCount}">Artwork Type:</label>
                 <select class="artType" id="artType-${artworkCount}">
                     <option value="canvas">Canvas</option>
                     <option value="sculpture">Sculpture</option>
                     <option value="other">Other</option>
                 </select>
-
                 <label for="material-${artworkCount}">Material:</label>
                 <select class="material" id="material-${artworkCount}">
                     <option value="oil">Oil Paint</option>
@@ -530,7 +710,6 @@
                     <option value="wood">Wood</option>
                     <option value="mixed">Mixed Media</option>
                 </select>
-
                 <label for="texture-${artworkCount}">Surface Texture:</label>
                 <select class="texture" id="texture-${artworkCount}">
                     <option value="smooth">Smooth</option>
@@ -543,247 +722,101 @@
         }
 
         function removeArtwork(button) {
-            if (document.getElementsByClassName('artwork-item').length > 1) {
-                button.parentElement.remove();
-            } else {
-                alert('You must have at least one artwork');
-            }
+            button.parentNode.remove();
         }
 
-        function calculateSuppliesCost() {
-            const suppliesPrices = {
-                'bubble_wrap': 25,
-                'foam': 35,
-                'poly_plastic': 15,
-                'paper_tape': 15,
-                'poly_tape': 15,
-                'cardboard': 35,
-                'plastic_wrap': 20,
-                'tyvek': 30
-            };
+        function addOtherFee() {
+            const container = document.getElementById('other-fees-container');
+            const newFee = document.createElement('div');
+            newFee.classList.add('other-fee-row');
+            newFee.innerHTML = `
+                <input type="text" placeholder="Fee Description" class="fee-name-input">
+                <input type="number" min="0" step="0.01" value="0" class="quantity-input">
+                <button type="button" class="remove-fee" onclick="removeFee(this)">Remove</button>
+            `;
+            container.appendChild(newFee);
+            otherFeeCount++;
+        }
 
-            let suppliesCost = 0;
-            
-            for (const [supplyId, price] of Object.entries(suppliesPrices)) {
-                const checkbox = document.getElementById(supplyId);
-                const qtyInput = document.getElementById(`${supplyId}_qty`);
-                
-                if (checkbox && qtyInput && checkbox.checked) {
-                    const qty = parseInt(qtyInput.value) || 0;
-                    suppliesCost += price * qty;
-                }
-            }
-
-            return suppliesCost;
+        function removeFee(button) {
+            button.parentNode.remove();
         }
 
         function calculateCost() {
-            const artworks = document.getElementsByClassName('artwork-item');
-            const techCount = parseInt(document.getElementById('techCount').value);
-            const days = parseInt(document.getElementById('days').value);
-            const siteVisit = document.getElementById('siteVisit').checked;
+            const artworks = document.querySelectorAll('.artwork-item');
+            const crateSize = document.getElementById('crateSize');
+            const laborCost = document.getElementById('laborCost');
+            const materialsCost = document.getElementById('materialsCost');
+            const siteVisitCost = document.getElementById('siteVisitCost');
+            const totalCost = document.getElementById('totalCost');
 
-            if (!techCount || !days) {
-                alert('Please fill in all required fields');
-                return;
-            }
-
+            let totalLaborCost = 0;
             let totalMaterialsCost = 0;
-            let totalVolume = 0;
-            let crateSizes = [];
 
-            for (let artwork of artworks) {
+            artworks.forEach((artwork) => {
                 const height = parseFloat(artwork.querySelector('.height').value);
                 const length = parseFloat(artwork.querySelector('.length').value);
                 const width = parseFloat(artwork.querySelector('.width').value);
                 const weight = parseFloat(artwork.querySelector('.weight').value);
-                const artType = artwork.querySelector('.artType').value;
-                const material = artwork.querySelector('.material').value;
-                const texture = artwork.querySelector('.texture').value;
 
-                if (!height || !length || !width || !weight) {
-                    alert('Please fill in all artwork dimensions');
-                    return;
-                }
+                const laborCostPerArtwork = calculateLaborCost(height, length, width, weight);
+                const materialsCostPerArtwork = calculateMaterialsCost(height, length, width, weight);
 
-                const cratePadding = texture === 'highly_textured' ? 8 : (texture === 'textured' ? 6 : 4);
-                const crateHeight = height + cratePadding;
-                const crateLength = length + cratePadding;
-                const crateWidth = width + cratePadding;
+                totalLaborCost += laborCostPerArtwork;
+                totalMaterialsCost += materialsCostPerArtwork;
+            });
 
-                const crateVolume = (crateHeight * crateLength * crateWidth) / 1728;
-                totalVolume += crateVolume;
-                totalMaterialsCost += calculateMaterialsCost(crateVolume, artType, material);
+            const siteVisitFee = document.getElementById('siteVisit').checked ? 200 : 0;
+            const total = totalLaborCost + totalMaterialsCost + siteVisitFee;
 
-                crateSizes.push({
-                    height: crateHeight,
-                    length: crateLength,
-                    width: crateWidth
-                });
-            }
-
-            const baseLabor = 45;
-            const hoursPerDay = 8;
-            const laborCost = techCount * days * hoursPerDay * baseLabor;
-            const siteVisitCost = siteVisit ? 200 : 0;
-            const additionalSuppliesCost = calculateSuppliesCost();
-            const totalCost = laborCost + totalMaterialsCost + siteVisitCost + additionalSuppliesCost;
+            crateSize.textContent = `Crate Size: ${calculateCrateSize(artworks)}`;
+            laborCost.textContent = `Labor Cost: $${totalLaborCost.toFixed(2)}`;
+            materialsCost.textContent = `Materials Cost: $${totalMaterialsCost.toFixed(2)}`;
+            siteVisitCost.textContent = `Site Visit Cost: $${siteVisitFee.toFixed(2)}`;
+            totalCost.textContent = `Total Cost: $${total.toFixed(2)}`;
 
             document.getElementById('result').style.display = 'block';
-            let crateSizesHtml = '<strong>Crate Dimensions:</strong><br>';
-            crateSizes.forEach((crate, index) => {
-                crateSizesHtml += `Artwork ${index + 1}: ${crate.height.toFixed(1)}" × ${crate.length.toFixed(1)}" × ${crate.width.toFixed(1)}"<br>`;
-            });
-            
-            document.getElementById('crateSize').innerHTML = crateSizesHtml;
-            document.getElementById('laborCost').innerHTML = `Labor Cost: $${laborCost.toFixed(2)}`;
-            document.getElementById('materialsCost').innerHTML = 
-                `Materials Cost: $${totalMaterialsCost.toFixed(2)} (Crating)<br>` +
-                `Additional Supplies: $${additionalSuppliesCost.toFixed(2)}`;
-            document.getElementById('siteVisitCost').innerHTML = siteVisit ? `Site Visit Cost: $${siteVisitCost.toFixed(2)}` : '';
-            document.getElementById('totalCost').innerHTML = `<strong>Total Estimated Cost: $${totalCost.toFixed(2)}</strong>`;
-
-            const largestCrate = crateSizes.reduce((max, crate) => {
-                const volume = crate.height * crate.length * crate.width;
-                const maxVolume = max.height * max.length * max.width;
-                return volume > maxVolume ? crate : max;
-            });
-            
-            updatePreview(largestCrate.height, largestCrate.length, largestCrate.width);
         }
 
-        function calculateMaterialsCost(volume, artType, material) {
-            const baseCrateCost = 200;
-            let materialMultiplier = 1;
-
-            if (artType === 'sculpture') {
-                materialMultiplier *= 1.5;
-            } else if (artType === 'other') {
-                materialMultiplier *= 1.75;
-            }
-
-            switch (material) {
-                case 'bronze':
-                case 'marble':
-                    materialMultiplier *= 2;
-                    break;
-                case 'mixed':
-                    materialMultiplier *= 1.3;
-                    break;
-            }
-
-            return baseCrateCost + (volume * 50 * materialMultiplier);
+        function calculateLaborCost(height, length, width, weight) {
+            // This is a placeholder function. You need to implement the actual logic to calculate labor cost.
+            return height * length * width * weight * 0.01;
         }
 
-        function updatePreview(height, length, width) {
-            const preview = document.getElementById('preview');
-            preview.innerHTML = '';
-            preview.classList.add('calculating');
+        function calculateMaterialsCost(height, length, width, weight) {
+            // This is a placeholder function. You need to implement the actual logic to calculate materials cost.
+            return height * length * width * weight * 0.005;
+        }
 
-            const maxDim = Math.max(height, length, width);
-            const scale = 250 / maxDim;
-
-            const box = document.createElement('div');
-            box.style.position = 'absolute';
-            box.style.width = `${length * scale}px`;
-            box.style.height = `${height * scale}px`;
-            box.style.border = '2px solid #2c3e50';
-            box.style.left = '50%';
-            box.style.top = '50%';
-            box.style.transform = 'translate(-50%, -50%)';
-            box.style.backgroundColor = 'rgba(44, 62, 80, 0.1)';
-
-            preview.appendChild(box);
-
-            setTimeout(() => {
-                preview.classList.remove('calculating');
-            }, 1000);
+        function calculateCrateSize(artworks) {
+            // This is a placeholder function. You need to implement the actual logic to calculate crate size.
+            let maxSize = 0;
+            artworks.forEach((artwork) => {
+                const height = parseFloat(artwork.querySelector('.height').value);
+                const length = parseFloat(artwork.querySelector('.length').value);
+                const width = parseFloat(artwork.querySelector('.width').value);
+                const size = Math.max(height, length, width);
+                if (size > maxSize) {
+                    maxSize = size;
+                }
+            });
+            return `${maxSize} x ${maxSize} x ${maxSize}`;
         }
 
         function saveAsPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title
-            doc.setFontSize(16);
-            doc.text('Art Shipping Estimate', 20, 20);
-            
-            // Get artwork details
-            let yPosition = 40;
-            const artworks = document.getElementsByClassName('artwork-item');
-            
-            doc.setFontSize(12);
-            doc.text('Artwork Details:', 20, yPosition);
-            yPosition += 10;
-            
-            Array.from(artworks).forEach((artwork, index) => {
-                const height = artwork.querySelector('.height').value;
-                const length = artwork.querySelector('.length').value;
-                const width = artwork.querySelector('.width').value;
-                const weight = artwork.querySelector('.weight').value;
-                const type = artwork.querySelector('.artType').value;
-                const material = artwork.querySelector('.material').value;
-                
-                doc.setFontSize(10);
-                doc.text(`Artwork ${index + 1}:`, 20, yPosition);
-                doc.text(`Dimensions: ${height}" × ${length}" × ${width}"`, 30, yPosition + 5);
-                doc.text(`Weight: ${weight} lbs`, 30, yPosition + 10);
-                doc.text(`Type: ${type}, Material: ${material}`, 30, yPosition + 15);
-                
-                yPosition += 25;
-            });
-            
-            // Add project details
-            doc.setFontSize(12);
-            doc.text('Project Details:', 20, yPosition);
-            yPosition += 10;
-            
-            doc.setFontSize(10);
-            doc.text(`Technicians: ${document.getElementById('techCount').value}`, 20, yPosition);
-            doc.text(`Days: ${document.getElementById('days').value}`, 20, yPosition + 5);
-            doc.text(`Site Visit: ${document.getElementById('siteVisit').checked ? 'Yes' : 'No'}`, 20, yPosition + 10);
-            
-            yPosition += 20;
-            
-            // Add costs
-            doc.setFontSize(12);
-            doc.text('Cost Breakdown:', 20, yPosition);
-            yPosition += 10;
-            
-            doc.setFontSize(10);
-            doc.text(document.getElementById('laborCost').innerText, 20, yPosition);
-            doc.text(document.getElementById('materialsCost').innerText.replace('<br>', ' - '), 20, yPosition + 5);
-            if (document.getElementById('siteVisitCost').innerText) {
-                doc.text(document.getElementById('siteVisitCost').innerText, 20, yPosition + 10);
-            }
-            doc.setFontSize(12);
-            doc.text(document.getElementById('totalCost').innerText, 20, yPosition + 20);
-            
-            // Save the PDF
-            doc.save('art-shipping-estimate.pdf');
+            const doc = new jspdf.jsPDF();
+            const result = document.getElementById('result');
+            doc.fromHTML(result.innerHTML, 15, 15);
+            doc.save('art_shipping_estimate.pdf');
         }
 
-        function toggleDayNightMode() {
+        function toggleDisplayMode() {
             document.body.classList.toggle('night-mode');
+            const modeLabel = document.querySelector('.mode-label');
+            modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
         }
 
-        function initializeSuppliesHandlers() {
-            const supplies = document.querySelectorAll('.supply-item input[type="checkbox"]');
-            supplies.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const qtyInput = document.getElementById(`${this.id}_qty`);
-                    if (!this.checked) {
-                        qtyInput.value = 0;
-                    } else if (qtyInput.value === '0') {
-                        qtyInput.value = 1;
-                    }
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('dayNightToggle').addEventListener('change', toggleDayNightMode);
-            initializeSuppliesHandlers();
-        });
+        document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
     </script>
-</body></html>
+</body>
+</html>
