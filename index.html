@@ -525,7 +525,7 @@
                 <div class="switch-container">
                     <label class="switch">
                         <input type="checkbox" id="displayMode">
-                        <span class="slider round"></span>
+                        <span class="slider"></span>
                     </label>
                     <span class="mode-label">Day</span>
                 </div>
@@ -882,10 +882,11 @@ function saveAsPDF() {
   });
 }
 function toggleDisplayMode() {
-  document.body.classList.toggle('night-mode');
-  const modeLabel = document.querySelector('.mode-label');
-  modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
+    document.body.classList.toggle('night-mode');
+    const modeLabel = document.querySelector('.mode-label');
+    modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
 }
+
 document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
 </script>
 </body>
