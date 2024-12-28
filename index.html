@@ -1,6 +1,7 @@
 <html><head><base href=".">
     <title>Art Shipping Estimate generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -241,6 +242,14 @@
 
         .pdf-button:hover {
             background: #d35400;
+        }
+
+        .night-mode .pdf-button {
+            background-color: #d35400;
+        }
+
+        .night-mode .pdf-button:hover {
+            background-color: #e67e22;
         }
 
         .additional-fees {
@@ -511,17 +520,11 @@
             }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="calculator-container">
         <h1>Art Shipping Estimate generator</h1>
-
-        <div class="form-group">
-            <label>Project Title</label>
-            <input type="text" id="projectTitle">
-            <div class="form-group">
-                <label for="displayMode">Display Mode:</label>
+<label for="displayMode">Display Mode:</label>
                 <div class="switch-container">
                     <label class="switch">
                         <input type="checkbox" id="displayMode">
@@ -529,6 +532,11 @@
                     </label>
                     <span class="mode-label">Day</span>
                 </div>
+        <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" id="projectTitle">
+            <div class="form-group">
+                
             </div>
             <h3>Artworks</h3>
             <div class="artworks-container" id="artworksContainer">
@@ -695,208 +703,208 @@
         </div>
     </div>
 
-    <script>let artworkCount = 1;
-let otherFeeCount = 1;
-function addArtwork() {
-  const container = document.getElementById('artworksContainer');
-  const newArtwork = document.createElement('div');
-  newArtwork.classList.add('artwork-item');
-  newArtwork.innerHTML = `
-                <button type="button" class="remove-artwork" onclick="removeArtwork(this)">×</button>
-                <label>Art Work Title</label>
-                <input type="text">
-                <label for="height-${artworkCount}">Height (inches):</label>
-                <input type="number" class="height" id="height-${artworkCount}" min="0" step="0.1">
-                <label for="length-${artworkCount}">Length (inches):</label>
-                <input type="number" class="length" id="length-${artworkCount}" min="0" step="0.1">
-                <label for="width-${artworkCount}">Width (inches):</label>
-                <input type="number" class="width" id="width-${artworkCount}" min="0" step="0.1">
-                <label for="weight-${artworkCount}">Weight (lbs):</label>
-                <input type="number" class="weight" id="weight-${artworkCount}" min="0" step="0.1">
-                <label for="artType-${artworkCount}">Artwork Type:</label>
-                <select class="artType" id="artType-${artworkCount}">
-                    <option value="canvas">Canvas</option>
-                    <option value="sculpture">Sculpture</option>
-                    <option value="other">Other</option>
-                </select>
-                <label for="material-${artworkCount}">Material:</label>
-                <select class="material" id="material-${artworkCount}">
-                    <option value="oil">Oil Paint</option>
-                    <option value="acrylic">Acrylic</option>
-                    <option value="bronze">Bronze</option>
-                    <option value="marble">Marble</option>
-                    <option value="wood">Wood</option>
-                    <option value="mixed">Mixed Media</option>
-                </select>
-                <label for="texture-${artworkCount}">Surface Texture:</label>
-                <select class="texture" id="texture-${artworkCount}">
-                    <option value="smooth">Smooth</option>
-                    <option value="textured">Textured</option>
-                    <option value="highly_textured">Highly Textured</option>
-                </select>
-            `;
-  container.appendChild(newArtwork);
-  artworkCount++;
-}
-function removeArtwork(button) {
-  button.parentNode.remove();
-}
-function addOtherFee() {
-  const container = document.getElementById('other-fees-container');
-  const newFee = document.createElement('div');
-  newFee.classList.add('other-fee-row');
-  newFee.innerHTML = `
-                <input type="text" placeholder="Fee Description" class="fee-name-input">
-                <input type="number" min="0" step="0.01" value="0" class="quantity-input">
-                <button type="button" class="remove-fee" onclick="removeFee(this)">Remove</button>
-            `;
-  container.appendChild(newFee);
-  otherFeeCount++;
-}
-function removeFee(button) {
-  button.parentNode.remove();
-}
-function calculateCost() {
-  const artworks = document.querySelectorAll('.artwork-item');
-  const crateSize = document.getElementById('crateSize');
-  const laborItems = document.getElementById('laborItems');
-  const materialsItems = document.getElementById('materialsItems');
-  const otherFeeItems = document.getElementById('otherFeeItems');
-  const totalCost = document.getElementById('totalCost');
-  laborItems.innerHTML = '';
-  materialsItems.innerHTML = '';
-  otherFeeItems.innerHTML = '';
-  let totalMaterialsCost = 0;
-  const fuelSurcharge = parseFloat(document.getElementById('fuel_surcharge').value);
-  const safetyAdmin = parseFloat(document.getElementById('safety_admin').value);
-  const warehouseFee = parseFloat(document.getElementById('warehouse_fee').value);
-  const transportFee = parseFloat(document.getElementById('transport_fee').value);
-  const exportDocs = parseFloat(document.getElementById('export_docs').value);
-  const siteVisitFee = document.getElementById('siteVisit').checked ? 200 : 0;
-  const projectTitle = document.getElementById('projectTitle').value;
-  document.getElementById('projectTitleDisplay').textContent = projectTitle;
-  const artworkTitles = document.getElementById('artworkTitles');
-  artworkTitles.innerHTML = '';
-  artworks.forEach((artwork, index) => {
-    const artworkTitle = artwork.querySelector('input[type="text"]').value;
-    const titleItem = document.createElement('li');
-    titleItem.textContent = `Artwork ${index + 1}: ${artworkTitle}`;
-    artworkTitles.appendChild(titleItem);
-    const height = parseFloat(artwork.querySelector('.height').value);
-    const length = parseFloat(artwork.querySelector('.length').value);
-    const width = parseFloat(artwork.querySelector('.width').value);
-    const weight = parseFloat(artwork.querySelector('.weight').value);
-    const materialsCostPerArtwork = calculateMaterialsCost(height, length, width, weight);
-    const materialsItem = document.createElement('li');
-    materialsItem.textContent = `Artwork ${index + 1}: $${materialsCostPerArtwork.toFixed(2)}`;
-    materialsItems.appendChild(materialsItem);
-    totalMaterialsCost += materialsCostPerArtwork;
-  });
-  document.querySelectorAll('.other-fee-row').forEach(row => {
-    const name = row.querySelector('.fee-name-input').value;
-    const cost = parseFloat(row.querySelector('.quantity-input').value);
-    const otherFeeItem = document.createElement('li');
-    otherFeeItem.innerHTML = `${name}: $<span>${cost.toFixed(2)}</span>`;
-    otherFeeItems.appendChild(otherFeeItem);
-  });
-  document.getElementById('fuelSurchargeCost').textContent = fuelSurcharge.toFixed(2);
-  document.getElementById('safetyAdminCost').textContent = safetyAdmin.toFixed(2);
-  document.getElementById('warehouseFeeCost').textContent = warehouseFee.toFixed(2);
-  document.getElementById('transportFeeCost').textContent = transportFee.toFixed(2);
-  document.getElementById('exportDocsCost').textContent = exportDocs.toFixed(2);
-  document.getElementById('siteVisitCost').textContent = siteVisitFee.toFixed(2);
-  document.getElementById('siteVisitItem').style.display = siteVisitFee > 0 ? 'list-item' : 'none';
-  const techCount = parseInt(document.getElementById('techCount').value);
-  const days = parseInt(document.getElementById('days').value);
-  const hoursPerDay = 8;
-  const hourlyRate = 50;
-  const laborCost = techCount * days * hoursPerDay * hourlyRate;
-  const laborItem = document.createElement('li');
-  laborItem.textContent = `Labor: $${laborCost.toFixed(2)}`;
-  laborItems.appendChild(laborItem);
-  const crateSizeText = calculateCrateSize(artworks);
-  const crateCost = calculateCrateCost(crateSizeText);
-  crateSize.textContent = crateSizeText;
-  document.getElementById('crateCost').textContent = crateCost.toFixed(2);
-  const total = laborCost + totalMaterialsCost + crateCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
-  totalCost.textContent = `Total Estimated Cost: $${total.toFixed(2)}`;
-  document.getElementById('result').style.display = 'block';
-}
-function calculateMaterialsCost(height, length, width, weight) {
-  return height * length * width * weight * 0.005;
-}
-function calculateCrateSize(artworks) {
-  let maxHeight = 0;
-  let maxLength = 0;
-  let maxWidth = 0;
-  let totalVolume = 0;
-  const PADDING = {
-    STANDARD: 4,
-    FRAGILE: 6,
-    WALL_THICKNESS: 0.75
-  };
-  artworks.forEach(artwork => {
-    const height = parseFloat(artwork.querySelector('.height').value) || 0;
-    const length = parseFloat(artwork.querySelector('.length').value) || 0;
-    const width = parseFloat(artwork.querySelector('.width').value) || 0;
-    const artType = artwork.querySelector('.artType').value;
-    const texture = artwork.querySelector('.texture').value;
-    let requiredPadding = PADDING.STANDARD;
-    if (artType === 'sculpture' || texture === 'highly_textured') {
-      requiredPadding = PADDING.FRAGILE;
+    <script>
+    let artworkCount = 1;
+    let otherFeeCount = 1;
+    function addArtwork() {
+      const container = document.getElementById('artworksContainer');
+      const newArtwork = document.createElement('div');
+      newArtwork.classList.add('artwork-item');
+      newArtwork.innerHTML = `
+                    <button type="button" class="remove-artwork" onclick="removeArtwork(this)">&#xd7;</button>
+                    <label>Art Work Title</label>
+                    <input type="text">
+                    <label for="height-${artworkCount}">Height (inches):</label>
+                    <input type="number" class="height" id="height-${artworkCount}" min="0" step="0.1">
+                    <label for="length-${artworkCount}">Length (inches):</label>
+                    <input type="number" class="length" id="length-${artworkCount}" min="0" step="0.1">
+                    <label for="width-${artworkCount}">Width (inches):</label>
+                    <input type="number" class="width" id="width-${artworkCount}" min="0" step="0.1">
+                    <label for="weight-${artworkCount}">Weight (lbs):</label>
+                    <input type="number" class="weight" id="weight-${artworkCount}" min="0" step="0.1">
+                    <label for="artType-${artworkCount}">Artwork Type:</label>
+                    <select class="artType" id="artType-${artworkCount}">
+                        <option value="canvas">Canvas</option>
+                        <option value="sculpture">Sculpture</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label for="material-${artworkCount}">Material:</label>
+                    <select class="material" id="material-${artworkCount}">
+                        <option value="oil">Oil Paint</option>
+                        <option value="acrylic">Acrylic</option>
+                        <option value="bronze">Bronze</option>
+                        <option value="marble">Marble</option>
+                        <option value="wood">Wood</option>
+                        <option value="mixed">Mixed Media</option>
+                    </select>
+                    <label for="texture-${artworkCount}">Surface Texture:</label>
+                    <select class="texture" id="texture-${artworkCount}">
+                        <option value="smooth">Smooth</option>
+                        <option value="textured">Textured</option>
+                        <option value="highly_textured">Highly Textured</option>
+                    </select>
+                `;
+      container.appendChild(newArtwork);
+      artworkCount++;
     }
-    const paddedHeight = height + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
-    const paddedLength = length + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
-    const paddedWidth = width + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
-    maxHeight = Math.max(maxHeight, paddedHeight);
-    maxLength = Math.max(maxLength, paddedLength);
-    maxWidth = Math.max(maxWidth, paddedWidth);
-    const volume = height * length * width;
-    totalVolume += volume;
-  });
-  maxHeight = Math.ceil(maxHeight);
-  maxLength = Math.ceil(maxLength);
-  maxWidth = Math.ceil(maxWidth);
-  const crateVolume = maxHeight * maxLength * maxWidth;
-  const volumeEfficiency = totalVolume / crateVolume;
-  if (volumeEfficiency < 0.3 && artworks.length > 1) {
-    const cubeRoot = Math.ceil(Math.cbrt(totalVolume * 2));
-    maxHeight = Math.max(maxHeight, cubeRoot);
-    maxLength = Math.max(maxLength, cubeRoot);
-    maxWidth = Math.max(maxWidth, cubeRoot);
-  }
-  const MINIMUM_SIZE = 12;
-  maxHeight = Math.max(maxHeight, MINIMUM_SIZE);
-  maxLength = Math.max(maxLength, MINIMUM_SIZE);
-  maxWidth = Math.max(maxWidth, MINIMUM_SIZE);
-  return `${maxHeight}" × ${maxLength}" × ${maxWidth}"`;
-}
-function calculateCrateCost(crateSize) {
-  const dimensions = crateSize.split(' × ');
-  const height = parseFloat(dimensions[0]);
-  const length = parseFloat(dimensions[1]);
-  const width = parseFloat(dimensions[2]);
-  
-  const volume = height * length * width;
-  return volume * 0.08;
-}
-function saveAsPDF() {
-  const doc = new jspdf.jsPDF();
-  const result = document.getElementById('result');
-  doc.html(result, {
-    callback: function (doc) {
-      doc.save('art_shipping_estimate.pdf');
-    },
-    x: 15,
-    y: 15
-  });
-}
-function toggleDisplayMode() {
-  document.body.classList.toggle('night-mode');
-  const modeLabel = document.querySelector('.mode-label');
-  modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
-}
-document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
-</script>
+    function removeArtwork(button) {
+      button.parentNode.remove();
+    }
+    function addOtherFee() {
+      const container = document.getElementById('other-fees-container');
+      const newFee = document.createElement('div');
+      newFee.classList.add('other-fee-row');
+      newFee.innerHTML = `
+                    <input type="text" placeholder="Fee Description" class="fee-name-input">
+                    <input type="number" min="0" step="0.01" value="0" class="quantity-input">
+                    <button type="button" class="remove-fee" onclick="removeFee(this)">Remove</button>
+                `;
+      container.appendChild(newFee);
+      otherFeeCount++;
+    }
+    function removeFee(button) {
+      button.parentNode.remove();
+    }
+    function calculateCost() {
+      const artworks = document.querySelectorAll('.artwork-item');
+      const crateSize = document.getElementById('crateSize');
+      const laborItems = document.getElementById('laborItems');
+      const materialsItems = document.getElementById('materialsItems');
+      const otherFeeItems = document.getElementById('otherFeeItems');
+      const totalCost = document.getElementById('totalCost');
+      laborItems.innerHTML = '';
+      materialsItems.innerHTML = '';
+      otherFeeItems.innerHTML = '';
+      let totalMaterialsCost = 0;
+      const fuelSurcharge = parseFloat(document.getElementById('fuel_surcharge').value);
+      const safetyAdmin = parseFloat(document.getElementById('safety_admin').value);
+      const warehouseFee = parseFloat(document.getElementById('warehouse_fee').value);
+      const transportFee = parseFloat(document.getElementById('transport_fee').value);
+      const exportDocs = parseFloat(document.getElementById('export_docs').value);
+      const siteVisitFee = document.getElementById('siteVisit').checked ? 200 : 0;
+      const projectTitle = document.getElementById('projectTitle').value;
+      document.getElementById('projectTitleDisplay').textContent = projectTitle;
+      const artworkTitles = document.getElementById('artworkTitles');
+      artworkTitles.innerHTML = '';
+      artworks.forEach((artwork, index) => {
+        const artworkTitle = artwork.querySelector('input[type="text"]').value;
+        const titleItem = document.createElement('li');
+        titleItem.textContent = `Artwork ${index + 1}: ${artworkTitle}`;
+        artworkTitles.appendChild(titleItem);
+        const height = parseFloat(artwork.querySelector('.height').value);
+        const length = parseFloat(artwork.querySelector('.length').value);
+        const width = parseFloat(artwork.querySelector('.width').value);
+        const weight = parseFloat(artwork.querySelector('.weight').value);
+        const materialsCostPerArtwork = calculateMaterialsCost(height, length, width, weight);
+        const materialsItem = document.createElement('li');
+        materialsItem.textContent = `Artwork ${index + 1}: $${materialsCostPerArtwork.toFixed(2)}`;
+        materialsItems.appendChild(materialsItem);
+        totalMaterialsCost += materialsCostPerArtwork;
+      });
+      document.querySelectorAll('.other-fee-row').forEach(row => {
+        const name = row.querySelector('.fee-name-input').value;
+        const cost = parseFloat(row.querySelector('.quantity-input').value);
+        const otherFeeItem = document.createElement('li');
+        otherFeeItem.innerHTML = `${name}: $<span>${cost.toFixed(2)}</span>`;
+        otherFeeItems.appendChild(otherFeeItem);
+      });
+      document.getElementById('fuelSurchargeCost').textContent = fuelSurcharge.toFixed(2);
+      document.getElementById('safetyAdminCost').textContent = safetyAdmin.toFixed(2);
+      document.getElementById('warehouseFeeCost').textContent = warehouseFee.toFixed(2);
+      document.getElementById('transportFeeCost').textContent = transportFee.toFixed(2);
+      document.getElementById('exportDocsCost').textContent = exportDocs.toFixed(2);
+      document.getElementById('siteVisitCost').textContent = siteVisitFee.toFixed(2);
+      document.getElementById('siteVisitItem').style.display = siteVisitFee > 0 ? 'list-item' : 'none';
+      const techCount = parseInt(document.getElementById('techCount').value);
+      const days = parseInt(document.getElementById('days').value);
+      const hoursPerDay = 8;
+      const hourlyRate = 50;
+      const laborCost = techCount * days * hoursPerDay * hourlyRate;
+      const laborItem = document.createElement('li');
+      laborItem.textContent = `Labor: $${laborCost.toFixed(2)}`;
+      laborItems.appendChild(laborItem);
+      const crateSizeText = calculateCrateSize(artworks);
+      const crateCost = calculateCrateCost(crateSizeText);
+      crateSize.textContent = crateSizeText;
+      document.getElementById('crateCost').textContent = crateCost.toFixed(2);
+      const total = laborCost + totalMaterialsCost + crateCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
+      totalCost.textContent = `Total Estimated Cost: $${total.toFixed(2)}`;
+      document.getElementById('result').style.display = 'block';
+    }
+    function calculateMaterialsCost(height, length, width, weight) {
+      return height * length * width * weight * 0.005;
+    }
+    function calculateCrateSize(artworks) {
+      let maxHeight = 0;
+      let maxLength = 0;
+      let maxWidth = 0;
+      let totalVolume = 0;
+      const PADDING = {
+        STANDARD: 4,
+        FRAGILE: 6,
+        WALL_THICKNESS: 0.75
+      };
+      artworks.forEach(artwork => {
+        const height = parseFloat(artwork.querySelector('.height').value) || 0;
+        const length = parseFloat(artwork.querySelector('.length').value) || 0;
+        const width = parseFloat(artwork.querySelector('.width').value) || 0;
+        const artType = artwork.querySelector('.artType').value;
+        const texture = artwork.querySelector('.texture').value;
+        let requiredPadding = PADDING.STANDARD;
+        if (artType === 'sculpture' || texture === 'highly_textured') {
+          requiredPadding = PADDING.FRAGILE;
+        }
+        const paddedHeight = height + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
+        const paddedLength = length + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
+        const paddedWidth = width + requiredPadding * 2 + PADDING.WALL_THICKNESS * 2;
+        maxHeight = Math.max(maxHeight, paddedHeight);
+        maxLength = Math.max(maxLength, paddedLength);
+        maxWidth = Math.max(maxWidth, paddedWidth);
+        const volume = height * length * width;
+        totalVolume += volume;
+      });
+      maxHeight = Math.ceil(maxHeight);
+      maxLength = Math.ceil(maxLength);
+      maxWidth = Math.ceil(maxWidth);
+      const crateVolume = maxHeight * maxLength * maxWidth;
+      const volumeEfficiency = totalVolume / crateVolume;
+      if (volumeEfficiency < 0.3 && artworks.length > 1) {
+        const cubeRoot = Math.ceil(Math.cbrt(totalVolume * 2));
+        maxHeight = Math.max(maxHeight, cubeRoot);
+        maxLength = Math.max(maxLength, cubeRoot);
+        maxWidth = Math.max(maxWidth, cubeRoot);
+      }
+      const MINIMUM_SIZE = 12;
+      maxHeight = Math.max(maxHeight, MINIMUM_SIZE);
+      maxLength = Math.max(maxLength, MINIMUM_SIZE);
+      maxWidth = Math.max(maxWidth, MINIMUM_SIZE);
+      return `${maxHeight}" × ${maxLength}" × ${maxWidth}"`;
+    }
+    function calculateCrateCost(crateSize) {
+      const dimensions = crateSize.split(' × ');
+      const height = parseFloat(dimensions[0]);
+      const length = parseFloat(dimensions[1]);
+      const width = parseFloat(dimensions[2]);
+      const volume = height * length * width;
+      return volume * 0.05;
+    }
+    function saveAsPDF() {
+      const doc = new jspdf.jsPDF();
+      const result = document.getElementById('result');
+      doc.html(result, {
+        callback: function (doc) {
+          doc.save('art_shipping_estimate.pdf');
+        },
+        x: 15,
+        y: 15
+      });
+    }
+    function toggleDisplayMode() {
+      document.body.classList.toggle('night-mode');
+      const modeLabel = document.querySelector('.mode-label');
+      modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
+    }
+    document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
+    </script>
 </body>
 </html>
