@@ -574,30 +574,30 @@
             <h3>Project Details</h3>
             <div class="additional-fees">
                 <div class="fee-item">
-                    <label for="fuel_surcharge">Local Trucking Fuel Surcharge (&#x24;):</label>
+                    <label for="fuel_surcharge">Local Trucking Fuel Surcharge ($):</label>
                     <input type="number" id="fuel_surcharge" min="0" step="0.01" value="0">
                 </div>
                 <div class="fee-item">
-                    <label for="safety_admin">Safety and Admin Fee (&#x24;):</label>
+                    <label for="safety_admin">Safety and Admin Fee ($):</label>
                     <input type="number" id="safety_admin" min="0" step="0.01" value="0">
                 </div>
                 <div class="fee-item">
-                    <label for="warehouse_fee">Warehouse Fee (&#x24;):</label>
+                    <label for="warehouse_fee">Warehouse Fee ($):</label>
                     <input type="number" id="warehouse_fee" min="0" step="0.01" value="0">
                 </div>
                 <div class="fee-item">
-                    <label for="transport_fee">Transport of Crated Work(s) (&#x24;):</label>
+                    <label for="transport_fee">Transport of Crated Work(s) ($):</label>
                     <input type="number" id="transport_fee" min="0" step="0.01" value="0">
                 </div>
                 <div class="fee-item">
-                    <label for="export_docs">Export Documentation/Security Compliance (&#x24;):</label>
+                    <label for="export_docs">Export Documentation/Security Compliance ($):</label>
                     <input type="number" id="export_docs" min="0" step="0.01" value="0">
                 </div>
                 <div class="fee-item">
                     <label for="other_fee">Other:</label>
                     <div class="other-fee-row">
-                        <input type="text" id="other_fee_name" placeholder="Fee Description" class="fee-name-input">
-                        <input type="number" id="other_fee" min="0" step="0.01" value="0" class="quantity-input">
+                        <input type="text" placeholder="Fee Description" class="fee-name-input">
+                        <input type="number" min="0" step="0.01" value="0" class="quantity-input">
                         <button type="button" class="add-other-fee" onclick="addOtherFee()">Add Another</button>
                     </div>
                     <div id="other-fees-container" class="other-fees-container"></div>
@@ -615,49 +615,49 @@
             <div id="supplies" class="supplies-list">
                 <div class="supply-item">
                     <input type="checkbox" id="bubble_wrap">
-                    <label for="bubble_wrap">Bubble Wrap (&#x24;25)</label>
+                    <label for="bubble_wrap">Bubble Wrap ($25)</label>
                     <input type="number" id="bubble_wrap_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="foam">
-                    <label for="foam">Foam Padding (&#x24;35)</label>
+                    <label for="foam">Foam Padding ($35)</label>
                     <input type="number" id="foam_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="poly_plastic">
-                    <label for="poly_plastic">Poly Plastic per ft (&#x24;15)</label>
+                    <label for="poly_plastic">Poly Plastic per ft ($15)</label>
                     <input type="number" id="poly_plastic_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="paper_tape">
-                    <label for="paper_tape">Paper Tape per roll (&#x24;15)</label>
+                    <label for="paper_tape">Paper Tape per roll ($15)</label>
                     <input type="number" id="paper_tape_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="poly_tape">
-                    <label for="poly_tape">Poly Tape per roll (&#x24;15)</label>
+                    <label for="poly_tape">Poly Tape per roll ($15)</label>
                     <input type="number" id="poly_tape_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="cardboard">
-                    <label for="cardboard">Cardboard Sheets (&#x24;35)</label>
+                    <label for="cardboard">Cardboard Sheets ($35)</label>
                     <input type="number" id="cardboard_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="plastic_wrap">
-                    <label for="plastic_wrap">Plastic Wrap (&#x24;20)</label>
+                    <label for="plastic_wrap">Plastic Wrap ($20)</label>
                     <input type="number" id="plastic_wrap_qty" min="0" value="0" class="quantity-input">
                 </div>
                 <div class="supply-item">
                     <input type="checkbox" id="tyvek">
-                    <label for="tyvek">Tyvek, Durtek, Twill per ft (&#x24;30)</label>
+                    <label for="tyvek">Tyvek, Durtek, Twill per ft ($30)</label>
                     <input type="number" id="tyvek_qty" min="0" value="0" class="quantity-input">
                 </div>
             </div>
             <div class="site-visit-container">
                 <label for="OnsiteWrap">On Site Wrapping Required</label>
                 <input type="checkbox" id="OnsiteWrap">
-                <label for="siteVisit">Site Visit Required (&#x24;200)</label>
+                <label for="siteVisit">Site Visit Required ($200)</label>
                 <input type="checkbox" id="siteVisit">
             </div>
         </div>
@@ -666,7 +666,6 @@
         <div class="result" id="result">
             <h3>Estimated Costs</h3>
             <p><strong>Project Title:</strong> <span id="projectTitleDisplay"></span></p>
-            <p id="crateSize"></p>
             <div id="itemizedCosts">
                 <p><strong>Artworks:</strong></p>
                 <ul id="artworkTitles"></ul>
@@ -674,14 +673,19 @@
                 <ul id="laborItems"></ul>
                 <p>Materials:</p>  
                 <ul id="materialsItems"></ul>
+                <p>Crate:</p>
+                <ul>
+                    <li>Crate Size: <span id="crateSize"></span></li>
+                    <li>Crate Cost: $<span id="crateCost">0.00</span></li>
+                </ul>
                 <p>Additional Fees:</p>
                 <ul>
-                    <li>Local Trucking Fuel Surcharge: &#x24;<span id="fuelSurchargeCost">0.00</span></li>  
-                    <li>Safety and Admin Fee: &#x24;<span id="safetyAdminCost">0.00</span></li>
-                    <li>Warehouse Fee: &#x24;<span id="warehouseFeeCost">0.00</span></li>
-                    <li>Transport of Crated Work(s): &#x24;<span id="transportFeeCost">0.00</span></li>  
-                    <li>Export Documentation/Security Compliance: &#x24;<span id="exportDocsCost">0.00</span></li>
-                    <li id="siteVisitItem">Site Visit Fee: &#x24;<span id="siteVisitCost">0.00</span></li>
+                    <li>Local Trucking Fuel Surcharge: $<span id="fuelSurchargeCost">0.00</span></li>  
+                    <li>Safety and Admin Fee: $<span id="safetyAdminCost">0.00</span></li>
+                    <li>Warehouse Fee: $<span id="warehouseFeeCost">0.00</span></li>
+                    <li>Transport of Crated Work(s): $<span id="transportFeeCost">0.00</span></li>  
+                    <li>Export Documentation/Security Compliance: $<span id="exportDocsCost">0.00</span></li>
+                    <li id="siteVisitItem">Site Visit Fee: $<span id="siteVisitCost">0.00</span></li>
                     <div id="otherFeeItems"></div>
                 </ul>
             </div>
@@ -810,8 +814,11 @@ function calculateCost() {
   const laborItem = document.createElement('li');
   laborItem.textContent = `Labor: $${laborCost.toFixed(2)}`;
   laborItems.appendChild(laborItem);
-  const total = laborCost + totalMaterialsCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
-  crateSize.textContent = `Crate Size: ${calculateCrateSize(artworks)}`;
+  const crateSizeText = calculateCrateSize(artworks);
+  const crateCost = calculateCrateCost(crateSizeText);
+  crateSize.textContent = crateSizeText;
+  document.getElementById('crateCost').textContent = crateCost.toFixed(2);
+  const total = laborCost + totalMaterialsCost + crateCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
   totalCost.textContent = `Total Estimated Cost: $${total.toFixed(2)}`;
   document.getElementById('result').style.display = 'block';
 }
@@ -864,6 +871,15 @@ function calculateCrateSize(artworks) {
   maxWidth = Math.max(maxWidth, MINIMUM_SIZE);
   return `${maxHeight}" × ${maxLength}" × ${maxWidth}"`;
 }
+function calculateCrateCost(crateSize) {
+  const dimensions = crateSize.split(' × ');
+  const height = parseFloat(dimensions[0]);
+  const length = parseFloat(dimensions[1]);
+  const width = parseFloat(dimensions[2]);
+  
+  const volume = height * length * width;
+  return volume * 0.08;
+}
 function saveAsPDF() {
   const doc = new jspdf.jsPDF();
   const result = document.getElementById('result');
@@ -880,6 +896,7 @@ function toggleDisplayMode() {
   const modeLabel = document.querySelector('.mode-label');
   modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
 }
-document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);</script>
+document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
+</script>
 </body>
 </html>
