@@ -519,7 +519,7 @@
 
         <div class="form-group">
             <label>Project Title</label>
-            <input type="text">
+            <input type="text" id="projectTitle">
             <div class="form-group">
                 <label for="displayMode">Display Mode:</label>
                 <div class="switch-container">
@@ -603,13 +603,13 @@
                     <div id="other-fees-container" class="other-fees-container"></div>
                 </div>
             </div>
-            <label for="techCount">Number of Technicians:</label>
-            <input type="number" id="techCount" min="1" max="10">
             <label for="days">Days to Complete:</label>
             <input type="number" id="days" min="1" max="30">
-            <label for="days">Collection date/time desired:</label>
+            <label for="techCount">Number of Technicians:</label>
+            <input type="number" id="techCount" min="1" max="10">
+            <label for="collection_date">Collection date/time desired:</label>
             <input type="datetime-local" id="collection_date" min="1" max="30">
-            <label for="days">Delivery date/time desired:</label>
+            <label for="delivery_date">Delivery date/time desired:</label>
             <input type="datetime-local" id="delivery_date" min="1" max="30">
             <label for="supplies">Required Supplies:</label>
             <div id="supplies" class="supplies-list">
@@ -665,20 +665,23 @@
 
         <div class="result" id="result">
             <h3>Estimated Costs</h3>
+            <p><strong>Project Title:</strong> <span id="projectTitleDisplay"></span></p>
             <p id="crateSize"></p>
             <div id="itemizedCosts">
+                <p><strong>Artworks:</strong></p>
+                <ul id="artworkTitles"></ul>
                 <p>Labor:</p>
                 <ul id="laborItems"></ul>
                 <p>Materials:</p>  
                 <ul id="materialsItems"></ul>
                 <p>Additional Fees:</p>
                 <ul>
-                    <li>Local Trucking Fuel Surcharge: $<span id="fuelSurchargeCost">0.00</span></li>  
-                    <li>Safety and Admin Fee: $<span id="safetyAdminCost">0.00</span></li>
-                    <li>Warehouse Fee: $<span id="warehouseFeeCost">0.00</span></li>
-                    <li>Transport of Crated Work(s): $<span id="transportFeeCost">0.00</span></li>  
-                    <li>Export Documentation/Security Compliance: $<span id="exportDocsCost">0.00</span></li>
-                    <li id="siteVisitItem">Site Visit Fee: $<span id="siteVisitCost">0.00</span></li>
+                    <li>Local Trucking Fuel Surcharge: &#x24;<span id="fuelSurchargeCost">0.00</span></li>  
+                    <li>Safety and Admin Fee: &#x24;<span id="safetyAdminCost">0.00</span></li>
+                    <li>Warehouse Fee: &#x24;<span id="warehouseFeeCost">0.00</span></li>
+                    <li>Transport of Crated Work(s): &#x24;<span id="transportFeeCost">0.00</span></li>  
+                    <li>Export Documentation/Security Compliance: &#x24;<span id="exportDocsCost">0.00</span></li>
+                    <li id="siteVisitItem">Site Visit Fee: &#x24;<span id="siteVisitCost">0.00</span></li>
                     <div id="otherFeeItems"></div>
                 </ul>
             </div>
@@ -756,70 +759,61 @@ function calculateCost() {
   const materialsItems = document.getElementById('materialsItems');
   const otherFeeItems = document.getElementById('otherFeeItems');
   const totalCost = document.getElementById('totalCost');
-
   laborItems.innerHTML = '';
-  materialsItems.innerHTML = '';  
+  materialsItems.innerHTML = '';
   otherFeeItems.innerHTML = '';
-
-  let totalLaborCost = 0;
   let totalMaterialsCost = 0;
-  
   const fuelSurcharge = parseFloat(document.getElementById('fuel_surcharge').value);
-  const safetyAdmin = parseFloat(document.getElementById('safety_admin').value);  
+  const safetyAdmin = parseFloat(document.getElementById('safety_admin').value);
   const warehouseFee = parseFloat(document.getElementById('warehouse_fee').value);
   const transportFee = parseFloat(document.getElementById('transport_fee').value);
   const exportDocs = parseFloat(document.getElementById('export_docs').value);
   const siteVisitFee = document.getElementById('siteVisit').checked ? 200 : 0;
-
+  const projectTitle = document.getElementById('projectTitle').value;
+  document.getElementById('projectTitleDisplay').textContent = projectTitle;
+  const artworkTitles = document.getElementById('artworkTitles');
+  artworkTitles.innerHTML = '';
   artworks.forEach((artwork, index) => {
+    const artworkTitle = artwork.querySelector('input[type="text"]').value;
+    const titleItem = document.createElement('li');
+    titleItem.textContent = `Artwork ${index + 1}: ${artworkTitle}`;
+    artworkTitles.appendChild(titleItem);
     const height = parseFloat(artwork.querySelector('.height').value);
     const length = parseFloat(artwork.querySelector('.length').value);
-    const width = parseFloat(artwork.querySelector('.width').value);  
+    const width = parseFloat(artwork.querySelector('.width').value);
     const weight = parseFloat(artwork.querySelector('.weight').value);
-
-    const laborCostPerArtwork = calculateLaborCost(height, length, width, weight);
     const materialsCostPerArtwork = calculateMaterialsCost(height, length, width, weight);
-
-    const laborItem = document.createElement('li');
-    laborItem.textContent = `Artwork ${index + 1}: $${laborCostPerArtwork.toFixed(2)}`;
-    laborItems.appendChild(laborItem);
-
     const materialsItem = document.createElement('li');
-    materialsItem.textContent = `Artwork ${index + 1}: $${materialsCostPerArtwork.toFixed(2)}`;  
+    materialsItem.textContent = `Artwork ${index + 1}: $${materialsCostPerArtwork.toFixed(2)}`;
     materialsItems.appendChild(materialsItem);
-
-    totalLaborCost += laborCostPerArtwork;
     totalMaterialsCost += materialsCostPerArtwork;
   });
-
   document.querySelectorAll('.other-fee-row').forEach(row => {
     const name = row.querySelector('.fee-name-input').value;
-    const cost = parseFloat(row.querySelector('.quantity-input').value);  
-    
+    const cost = parseFloat(row.querySelector('.quantity-input').value);
     const otherFeeItem = document.createElement('li');
     otherFeeItem.innerHTML = `${name}: $<span>${cost.toFixed(2)}</span>`;
     otherFeeItems.appendChild(otherFeeItem);
   });
-
   document.getElementById('fuelSurchargeCost').textContent = fuelSurcharge.toFixed(2);
   document.getElementById('safetyAdminCost').textContent = safetyAdmin.toFixed(2);
   document.getElementById('warehouseFeeCost').textContent = warehouseFee.toFixed(2);
   document.getElementById('transportFeeCost').textContent = transportFee.toFixed(2);
-  document.getElementById('exportDocsCost').textContent = exportDocs.toFixed(2);  
+  document.getElementById('exportDocsCost').textContent = exportDocs.toFixed(2);
   document.getElementById('siteVisitCost').textContent = siteVisitFee.toFixed(2);
-  
   document.getElementById('siteVisitItem').style.display = siteVisitFee > 0 ? 'list-item' : 'none';
-  
-  const total = totalLaborCost + totalMaterialsCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
-  
+  const techCount = parseInt(document.getElementById('techCount').value);
+  const days = parseInt(document.getElementById('days').value);
+  const hoursPerDay = 8;
+  const hourlyRate = 50;
+  const laborCost = techCount * days * hoursPerDay * hourlyRate;
+  const laborItem = document.createElement('li');
+  laborItem.textContent = `Labor: $${laborCost.toFixed(2)}`;
+  laborItems.appendChild(laborItem);
+  const total = laborCost + totalMaterialsCost + fuelSurcharge + safetyAdmin + warehouseFee + transportFee + exportDocs + siteVisitFee;
   crateSize.textContent = `Crate Size: ${calculateCrateSize(artworks)}`;
-  
   totalCost.textContent = `Total Estimated Cost: $${total.toFixed(2)}`;
-
-  document.getElementById('result').style.display = 'block'; 
-}
-function calculateLaborCost(height, length, width, weight) {
-  return height * length * width * weight * 0.01;
+  document.getElementById('result').style.display = 'block';
 }
 function calculateMaterialsCost(height, length, width, weight) {
   return height * length * width * weight * 0.005;
@@ -882,12 +876,10 @@ function saveAsPDF() {
   });
 }
 function toggleDisplayMode() {
-    document.body.classList.toggle('night-mode');
-    const modeLabel = document.querySelector('.mode-label');
-    modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
+  document.body.classList.toggle('night-mode');
+  const modeLabel = document.querySelector('.mode-label');
+  modeLabel.textContent = document.body.classList.contains('night-mode') ? 'Night' : 'Day';
 }
-
-document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);
-</script>
+document.getElementById('displayMode').addEventListener('change', toggleDisplayMode);</script>
 </body>
 </html>
